@@ -1,4 +1,8 @@
-<p>This is a basic HTTP form that sends a request to an API in AWS and does the conversion in Lambda then sends the result back</p><br> 
+<p>This is a basic HTTP form that sends a request to an API in AWS and does the conversion in Lambda then sends the result back.
+The source code can be seen at <a href="https://github.com/mc70050/tempConversion/tree/master">Click here.</a></p><br> 
+
+<!-- Start of the form that contains a dropdown menu for initial temperature unit
+     and a textbox for entering numbers only for temperature. -->
 <form id="temp-conversion" onsubmit="return false;">
 	<label for="initialTemp">Choose the initial unit for your conversion</label>
 	<select id="initialTemp">
@@ -9,14 +13,18 @@
 	<input id="temperature" type="number" />
     <input id="submit" type="submit" value="Convert" />
 </form>
+ <!-- End of form -->
+ 
+ <!-- The following div tag is used to produce the text for the result of conversion. -->
 <div id="form-response"></div>
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
 	<script>
         $(document).ready(function() {
 
             $("#submit").click(function(e) {
                 e.preventDefault();
-
+				// create variables that contains the values from dropdown menu and textbox
                 var temp = $("#temperature").val();
 				var type = $("#initialTemp").val();
 				console.log("temperature is " + temp);
@@ -24,16 +32,21 @@
 
                 $.ajax({
                     type: "POST",
-                    url: 'https://6v1uhuiab4.execute-api.us-west-2.amazonaws.com/Deploy/convert',
+                    url: 'https://6v1uhuiab4.execute-api.us-west-2.amazonaws.com/Deploy/convert',	// this url is from API Gateway in AWS
                     contentType: 'application/json',
                     data: JSON.stringify({ 
 						'temp': temp,
 						'type': type
-					}),
+					}),		// data needs to be JSON.stringify again for lambda function
                     success: function(res){
+						// All action to be done after a successful attempt to send the POST request is 
+						// done in this area. The parameter 'res' is the result sent back by the lambda
+						// function.
                         $('#form-response').text(res.body);
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {
+						// If an error occurs for whatever reason, some kind of notes or alerts
+						// should be shown in this area to help debug.
                         alert("There was an error");
                         console.log(XMLHttpRequest);
                     }
