@@ -1,0 +1,45 @@
+<p>This is a basic HTTP form that sends a request to an API in AWS and does the conversion in Lambda then sends the result back</p><br> 
+<form id="temp-conversion" onsubmit="return false;">
+	<label for="initialTemp">Choose the initial unit for your conversion</label>
+	<select id="initialTemp">
+		<option value="Celsius" selected>Celsius</option>
+		<option value="Fahrenheit">Fahrenheit</option>
+	</select><br>
+	<label for="temperature">Temperature to be converted</label>
+	<input id="temperature" type="number" />
+    <input id="submit" type="submit" value="Convert" />
+</form>
+<div id="form-response"></div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+	<script>
+        $(document).ready(function() {
+
+            $("#submit").click(function(e) {
+                e.preventDefault();
+
+                var temp = $("#temperature").val();
+				var type = $("#initialTemp").val();
+				console.log("temperature is " + temp);
+				console.log("Unit for conversion is " + type);
+
+                $.ajax({
+                    type: "POST",
+                    url: 'https://6v1uhuiab4.execute-api.us-west-2.amazonaws.com/Deploy/convert',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ 
+						'temp': temp,
+						'type': type
+					}),
+                    success: function(res){
+                        $('#form-response').text(res.body);
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert("There was an error");
+                        console.log(XMLHttpRequest);
+                    }
+                });
+
+            })
+
+        });
+    </script>
